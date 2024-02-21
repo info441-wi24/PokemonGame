@@ -1,12 +1,4 @@
-/*
- * Name: Brian Yuan
- * Date: April 28, 2023
- * Section: CSE 154 AD
- *
- * This is the JS to implement the pokemon game. User has ability to see the 151 pokemon cards
- * and click on them to fight with different random pokemons. The pokemon has one to four moves.
- * it can displayed the results when fighting and collecting other pokemons.
- */
+
 "use strict";
 (function() {
   const BASE_URL = "https://courses.cs.washington.edu/courses/cse154/webservices/pokedex/pokedex.php";
