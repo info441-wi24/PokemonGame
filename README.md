@@ -1,3 +1,6 @@
+# Deployed Link:
+https://pokemongame441.azurewebsites.net/
+
 # Project Description
 In the rapidly evolving landscape of online gaming, our development team has identified a unique opportunity to innovate within the Pokémon community by creating a multiplayer online Pokémon battle platform. This initiative is strategically designed to cater to competitive players who seek a rigorous and strategy-based platform where they can challenge themselves and others in real-time battles. Our target audience is unified by their passion for Pokémon and desire for a more immersive, interactive battle experience.
 

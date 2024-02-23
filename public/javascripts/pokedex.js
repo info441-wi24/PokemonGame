@@ -1,3 +1,6 @@
+async function init(){
+  await loadIdentity();
+}
 
 "use strict";
 (function() {
