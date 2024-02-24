@@ -6,7 +6,7 @@ import models from './models.js';
 import msIdExpress from 'microsoft-identity-express'
 import sessions from 'express-session'
 
-import usersRouter from './routes/api/users.js';
+import apiRouter from './routes/api.js';
 
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
@@ -53,7 +53,7 @@ app.use((req, res, next) => {
     next();
   });
 
-app.use('/users', usersRouter);
+app.use('/api', apiRouter)
 
 app.get('/signin',
 	msid.signIn({postLoginRedirect: '/'})

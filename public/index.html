@@ -14,9 +14,18 @@
     <script src="javascripts/userIdentity.js"></script>
   </head>
   <body>
-    <nav class="navbar navbar-light bg-light">
+    <!-- <nav class="navbar navbar-light bg-light">
       <div id="errorInfo" class="alert alert-danger fade show" role="alert" style="opacity:0"></div>
       <div id="identity_div">loading...</div>
+    </nav> -->
+
+    <!-- Modified bavbar having Login / Logout anchor link. -->
+    <nav>
+      <div class="login/logout container">
+        <a href="/signin">Log in</a>
+        <a href="/signout">Log out</a>
+        <a href="/api/users/myIdentity">User Info</a>
+      </div>
     </nav>
 
     <header>
