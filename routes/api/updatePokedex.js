@@ -41,7 +41,7 @@ router.post('/', async (req, res) => {
 router.get('/getPokedex', async (req, res) => {
   const username = req.session.account.username;
   try {
-      const userPokedex = await req.models.UserPokedex.findOne({ playerId: username });
+      let userPokedex = await req.models.UserPokedex.findOne({ playerId: username });
       if (userPokedex) {
           res.json(userPokedex);
       } else {

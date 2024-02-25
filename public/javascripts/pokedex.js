@@ -51,6 +51,19 @@ async function init(){
       .catch(console.error); // define a user-friendly error-message function
   }
 
+  async function fetchUserPokedex() {
+    try {
+        const response = await fetch(`/api/updatePokedex/getPokedex`);
+        if (!response.ok) {
+            throw new Error('Failed to fetch Pokedex');
+        }
+        const pokedexData = await response.json();
+        return pokedexData.pokemons; // Assuming the response structure includes { pokemons: [] }
+    } catch (error) {
+        console.error('Error fetching Pokedex:', error);
+        return []; // Return an empty array in case of error
+    }
+  }
 
   /**
    * This function process the data from the base url to populat all of the data
@@ -58,23 +71,50 @@ async function init(){
    * information for the starter pokemons like bulbasaur
    * @param {text} responseData - it returns the text data from base url
    */
-  function processData(responseData) {
-    responseData = responseData.split('\n');
-    for (let i = 0; i < responseData.length; i++) {
-      let shortName = (((responseData[i]).split(":"))[1]);
-      let pokemonImg = gen("img");
-      let imagePath = "sprites/" + shortName + ".png";
-      pokemonImg.src = PICTURE_URL + imagePath;
-      id('pokedex-view').appendChild(pokemonImg);
-      pokemonImg.classList.add("sprite");
-      if ((shortName === "bulbasaur") || (shortName === "charmander") ||
-          (shortName === "squirtle")) {
-        pokemonImg.classList.add("found");
+  async function processData(responseData) {
+    let identityInfo = await fetchJSON(`api/users/myIdentity`)
+    if(identityInfo.status == "loggedin"){
+      const userPokedex = await fetchUserPokedex();
+      console.log(JSON.stringify(userPokedex, null, 2));
+      responseData = responseData.split('\n');
+      for (let i = 0; i < responseData.length; i++) {
+        let shortName = (((responseData[i]).split(":"))[1]);
+        let pokemonImg = gen("img");
+        let imagePath = "sprites/" + shortName + ".png";
+        pokemonImg.src = PICTURE_URL + imagePath;
+        id('pokedex-view').appendChild(pokemonImg);
+        pokemonImg.classList.add("sprite");
+        if ((shortName === "bulbasaur") || (shortName === "charmander") ||
+        (shortName === "squirtle")) {
+          pokemonImg.classList.add("found");
+        } 
+        if (JSON.stringify(userPokedex, null, 2).includes(shortName)) {
+          pokemonImg.classList.add("found");
+        }
+        if (pokemonImg.classList.contains("found")) {
+          pokemonImg.addEventListener("click", function() {
+            getPokemon(shortName);
+          });
+        }
       }
-      if (pokemonImg.classList.contains("found")) {
-        pokemonImg.addEventListener("click", function() {
-          getPokemon(shortName);
-        });
+    } else {
+      responseData = responseData.split('\n');
+      for (let i = 0; i < responseData.length; i++) {
+        let shortName = (((responseData[i]).split(":"))[1]);
+        let pokemonImg = gen("img");
+        let imagePath = "sprites/" + shortName + ".png";
+        pokemonImg.src = PICTURE_URL + imagePath;
+        id('pokedex-view').appendChild(pokemonImg);
+        pokemonImg.classList.add("sprite");
+        if ((shortName === "bulbasaur") || (shortName === "charmander") ||
+        (shortName === "squirtle")) {
+          pokemonImg.classList.add("found");
+        } 
+        if (pokemonImg.classList.contains("found")) {
+          pokemonImg.addEventListener("click", function() {
+            getPokemon(shortName);
+          });
+        }
       }
     }
   }
