@@ -5,6 +5,8 @@ import logger from 'morgan';
 import models from './models.js';
 import msIdExpress from 'microsoft-identity-express'
 import sessions from 'express-session'
+import bodyParser from 'body-parser';
+
 
 import apiRouter from './routes/api.js';
 
@@ -12,11 +14,11 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 
 const appSettings = {
-    appCredentials: {
-      clientId:  "e4649360-cb57-4800-9a7b-58b1b2fb3878",
-      tenantId:  "f6b6dd5b-f02f-441a-99a0-162ac5060bd2",
-      clientSecret: "euL8Q~HZoc~Z_kim30TO7Iw3X9F~8Zw1qgqmIbyl"
-    },
+  appCredentials: {
+    clientId:  "7a1d287a-4ed3-46e6-9ac0-ee4c07e3d5b7",
+    tenantId:  "f6b6dd5b-f02f-441a-99a0-162ac5060bd2",
+    clientSecret:  "E_t8Q~srK70axXVElAEKtl8DFHQaX27mQlrZQdvk"
+},
     authRoutes: {
       redirect: "/redirect",
       error: "/error",
@@ -34,10 +36,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
+app.use(bodyParser.json());
+app.use((req, res, next) => {
+  req.models = models
+  next();
+})
 const oneDay = 1000 * 60 * 60 * 24
 app.use(sessions({
-    secret: "this is some secret key I am making up",
+    secret: "4ed584bf3c0bb64ddee0",
     saveUninitialized: true,
     cookie: {maxAge: oneDay},
     resave: false

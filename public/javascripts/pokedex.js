@@ -9,7 +9,7 @@ async function init(){
   const gameURL = "https://courses.cs.washington.edu/courses/cse154/webservices/pokedex/game.php";
   let CurrentPokemon = "bulbasaur";
   let gameId = null;
-  let playerId = null;
+  let playerId = 1;
   window.addEventListener("load", init);
 
   /**
@@ -199,7 +199,34 @@ async function init(){
     qs("#p2 .health-bar").style.width = p2Percentage * 100 + '%';
     qs("#p1 .card .hp").textContent = (responseData.p1['current-hp']) + "HP";
     qs("#p2 .card .hp").textContent = (responseData.p2['current-hp']) + "HP";
+
+    fetch('/api/battles', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json', // Indicate that the body is JSON
+      },
+      body: JSON.stringify({ // Convert the JavaScript object to a JSON string
+        userId: playerId,
+        pokemonChosen: CurrentPokemon,
+        opponentPokemon: responseData.p2.name,
+        movesUsed: responseData.results['p1-move'],
+        outcome: responseData.p1['current-hp'] <= 0 ? 'lose' : 'win'
+      })
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return response.json(); // Parse the JSON response
+    })
+    .then(data => console.log('Battle data saved:', data))
+    .catch((error) => {
+      console.error('Error sending battle data:', error);
+    });
+
   }
+
+
 
   /**
    * The part 2 of the process results
