@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const uri = 'mongodb+srv://new_user_1:TBKgSxgty5cFKrAI@cluster0.dwrmvy4.mongodb.net/';
+const uri = 'mongodb+srv://briancard3070:KeGvOgE9v4A6DX3K@cluster0.tfea2ob.mongodb.net/?retryWrites=true&w=majority';
 mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
 const db = mongoose.connection;

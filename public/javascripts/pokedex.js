@@ -41,8 +41,8 @@ async function init(){
         const response = await fetch('api/users/myIdentity');
         const data = await response.json();
         if (data.status === "loggedin") {
-          window.name = data.userInfo.name;
-          window.username = data.userInfo.username;
+          name = data.userInfo.name;
+          username = data.userInfo.username;
           return true;
       } else {
           return false;
@@ -434,8 +434,6 @@ async function gameView() {
 
   async function setOnlineStatus() {
     const userId = playerId;
-    const name = name;
-    const username = username;
     try {
         const response = await fetch('/api/users/setOnlineStatus', {
             method: 'POST',
@@ -475,9 +473,9 @@ async function gamerequest(startgame, mypokemon) {
 
   try {
     const response = await fetch(url, {method: "POST", body: params});
-    const statusCheckedResponse = await statusCheck(response); // Ensure statusCheck is async or returns a Promise
+    const statusCheckedResponse = await statusCheck(response);
     const responseData = await statusCheckedResponse.json();
-    await ProcessGame(responseData); // Assuming ProcessGame is also async
+    await ProcessGame(responseData);
   } catch (error) {
     console.error(error);
   }
@@ -492,6 +490,7 @@ async function ProcessGame(responseData) {
   await makingPokemon("p2", responseData.p2); // makingPokemon needs to be async if it performs async operations
   gameId = responseData.guid;
   playerId = responseData.pid;
+  console.log(playerId)
 }
 
   /**

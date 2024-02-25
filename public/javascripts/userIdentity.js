@@ -14,6 +14,7 @@ async function loadIdentity(){
             if(document.getElementById("make_post_div")){
                 document.getElementById("make_post_div").classList.remove("d-none");
             }
+            
 
 
             Array.from(document.getElementsByClassName("new-comment-box")).forEach(e => e.classList.remove("d-none"))

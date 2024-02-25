@@ -21,10 +21,23 @@ router.get('/myIdentity', (req, res) => {
 
 router.post('/setOnlineStatus', async (req, res) => {
     const { userId, online } = req.body;
+
     try {
-        // Assuming you have a User model and the user's online status is stored in an 'online' field
-        await req.models.UserPokedex.findByIdAndUpdate(userId, { online: online });
-        res.json({ message: 'User status updated successfully.' });
+        const userPokedex = await req.models.UserPokedex.findOne({ playerId: userId });
+
+        if (userPokedex) {
+            userPokedex.online = online;
+            await userPokedex.save();
+            res.json({ message: 'User status updated successfully.' });
+        } else {
+            // If no document exists for this userId, create a new one
+            const newUserPokedex = new req.models.UserPokedex({
+                playerId: userId,
+                online: online
+            });
+            await newUserPokedex.save();
+            res.json({ message: 'UserPokedex created and status updated successfully.' });
+        }
     } catch (error) {
         console.error('Failed to update user status:', error);
         res.status(500).json({ error: 'Failed to update user status.' });
