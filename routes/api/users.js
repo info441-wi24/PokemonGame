@@ -19,4 +19,16 @@ router.get('/myIdentity', (req, res) => {
   }
 });
 
+router.post('/setOnlineStatus', async (req, res) => {
+    const { userId, online } = req.body;
+    try {
+        // Assuming you have a User model and the user's online status is stored in an 'online' field
+        await req.models.UserPokedex.findByIdAndUpdate(userId, { online: online });
+        res.json({ message: 'User status updated successfully.' });
+    } catch (error) {
+        console.error('Failed to update user status:', error);
+        res.status(500).json({ error: 'Failed to update user status.' });
+    }
+});
+
 export default router;

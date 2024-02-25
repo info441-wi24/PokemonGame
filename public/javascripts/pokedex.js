@@ -10,6 +10,8 @@ async function init(){
   let CurrentPokemon = "bulbasaur";
   let gameId = null;
   let playerId = null;
+  let name = null;
+  let username = null;
   window.addEventListener("load", init);
 
   /**
@@ -19,9 +21,37 @@ async function init(){
   function init() {
     makeRequest("?pokedex=all");
     const startButton = id("start-btn");
-    startButton.addEventListener("click", gameView);
+    startButton.addEventListener("click", async () => {
+      const isLoggedIn = await checkLoginStatus();
+      if (!isLoggedIn) {
+          console.error('User is not logged in. Player ID is not set.');
+          alert('You must be logged in to start the game.');
+          return;
+      }
+      await gameView();
+      if (playerId) {
+          await setOnlineStatus();
+      } else {
+          console.error('Player ID is not set.');
+      }
+  });
+}
+  async function checkLoginStatus() {
+    try {
+        const response = await fetch('api/users/myIdentity');
+        const data = await response.json();
+        if (data.status === "loggedin") {
+          window.name = data.userInfo.name;
+          window.username = data.userInfo.username;
+          return true;
+      } else {
+          return false;
+      }
+  } catch (error) {
+      console.error('Error checking login status:', error);
+      return false; // Assume not logged in on error
   }
-
+}
   /**
    * this function after it gets called from init function it fetch the base url
    * then it process the data to get all of the pokemon on the view page
@@ -87,7 +117,7 @@ async function init(){
         if ((shortName === "bulbasaur") || (shortName === "charmander") ||
         (shortName === "squirtle")) {
           pokemonImg.classList.add("found");
-        } 
+        }
         if (JSON.stringify(userPokedex, null, 2).includes(shortName)) {
           pokemonImg.classList.add("found");
         }
@@ -109,7 +139,7 @@ async function init(){
         if ((shortName === "bulbasaur") || (shortName === "charmander") ||
         (shortName === "squirtle")) {
           pokemonImg.classList.add("found");
-        } 
+        }
         if (pokemonImg.classList.contains("found")) {
           pokemonImg.addEventListener("click", function() {
             getPokemon(shortName);
@@ -140,15 +170,15 @@ async function init(){
    * @param {string} pCard - p1 or p2 card
    * @param {json} responseData - the fech data
    */
-  function makingPokemon(pCard, responseData) {
+  async function makingPokemon(pCard, responseData) {
     qs("#" + pCard + " .name").textContent = responseData.name;
     qs("#" + pCard + " .pokepic").src = PICTURE_URL + responseData.images.photo;
     qs("#" + pCard + " .type").src = PICTURE_URL + responseData.images.typeIcon;
     qs("#" + pCard + " .weakness").src = PICTURE_URL + responseData.images.weaknessIcon;
     qs("#" + pCard + " .hp").textContent = responseData.hp + "HP";
     qs("#" + pCard + " .info").textContent = responseData.info.description;
-    moves(pCard, responseData);
-  }
+    await moves(pCard, responseData); // Assuming moves is async
+}
 
   /**
    * this function takes p1 or p2 data and making the specific move data for the
@@ -156,32 +186,36 @@ async function init(){
    * @param {string} pCard - p1 or p2 card
    * @param {json} responseData - fetch data
    */
-  function moves(pCard, responseData) {
+  async function moves(pCard, responseData) {
     let newMove = qsa("#" + pCard + " .move");
     let Moveimage = qsa("#" + pCard + " .moves img");
     let MoveDp = qsa("#" + pCard + " .dp");
     let newButton = qsa("#" + pCard + " button");
     let numberOfMoves = responseData.moves.length;
+
     for (let i = numberOfMoves; i < newMove.length; i++) {
-      newButton[i].classList.add("hidden");
+        newButton[i].classList.add("hidden");
     }
+
     if (numberOfMoves === newMove.length) {
-      for (let i = 0; i < numberOfMoves; i++) {
-        if (newButton[i].classList.contains("hidden")) {
-          newButton[i].classList.remove("hidden");
+        for (let i = 0; i < numberOfMoves; i++) {
+            if (newButton[i].classList.contains("hidden")) {
+                newButton[i].classList.remove("hidden");
+            }
         }
-      }
     }
+
     for (let i = 0; i < numberOfMoves; i++) {
-      newMove[i].textContent = ((responseData.moves)[i]).name;
-      Moveimage[i].src = PICTURE_URL + "icons/" + ((responseData.moves)[i]).type + ".jpg";
-      if (typeof (((responseData.moves)[i]).dp) !== 'undefined') {
-        MoveDp[i].textContent = ((responseData.moves)[i]).dp + "dp";
-      } else {
-        MoveDp[i].textContent = "";
-      }
+        newMove[i].textContent = ((responseData.moves)[i]).name;
+        Moveimage[i].src = PICTURE_URL + "icons/" + ((responseData.moves)[i]).type + ".jpg";
+        if (typeof (((responseData.moves)[i]).dp) !== 'undefined') {
+            MoveDp[i].textContent = ((responseData.moves)[i]).dp + "dp";
+        } else {
+            MoveDp[i].textContent = "";
+        }
     }
-  }
+}
+
 
   /**
    * this function takes in a parameter from the eventlisterner and move the selected
@@ -365,26 +399,59 @@ async function init(){
     return res;
   }
 
-  /**
-   * the games starts and the move button and p2 info is able to see
-   * the flee button is also disabled
-   */
-  function gameView() {
-    const pokedexView = id("pokedex-view");
-    pokedexView.classList.add("hidden");
-    id("p2").classList.remove("hidden");
-    qs(".hp-info").classList.remove("hidden");
-    qs("#results-container").classList.remove("hidden");
-    id("start-btn").classList.add("hidden");
-    id("flee-btn").classList.remove("hidden");
-    qs("#flee-btn").addEventListener("click", flee);
-    qs("header h1").textContent = "Pokemon Battle";
-    let newButton = qsa("#p1 button");
-    for (let i = 0; i < 4; i++) {
-      newButton[i].disabled = false;
-    }
-    gamerequest(true, CurrentPokemon);
+/**
+ * The game starts and the move button and p2 info are able to be seen.
+ * The flee button is also disabled.
+ */
+async function gameView() {
+  const pokedexView = id("pokedex-view");
+  pokedexView.classList.add("hidden");
+  id("p2").classList.remove("hidden");
+  qs(".hp-info").classList.remove("hidden");
+  qs("#results-container").classList.remove("hidden");
+  id("start-btn").classList.add("hidden");
+  id("flee-btn").classList.remove("hidden");
+
+
+  qs("#flee-btn").addEventListener("click", flee);
+
+  qs("header h1").textContent = "Pokemon Battle";
+
+
+  let newButton = qsa("#p1 button");
+  for (let i = 0; i < 4; i++) {
+    newButton[i].disabled = false;
   }
+
+  try {
+    await gamerequest(true, CurrentPokemon);
+  } catch (error) {
+    console.error("Error during game request:", error);
+  }
+}
+
+
+
+  async function setOnlineStatus() {
+    const userId = playerId;
+    const name = name;
+    const username = username;
+    try {
+        const response = await fetch('/api/users/setOnlineStatus', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ userId: userId, online: true }),
+        });
+        if (!response.ok) {
+            throw new Error('Failed to set user online');
+        }
+        console.log('User set to online');
+    } catch (error) {
+        console.error('Error setting user to online:', error);
+    }
+}
 
   /**
    * when user clicked on the flee button the game ends
@@ -395,32 +462,37 @@ async function init(){
     endGame();
   }
 
-  /**
-   * this method gte the game and pokemeon to get the player id/ game id
-   * @param {boolean} startgame - true or false for the game
-   * @param {string} mypokemon - the name of the pokemon
-   */
-  function gamerequest(startgame, mypokemon) {
-    let url = gameURL;
-    let params = new FormData();
-    params.append("startgame", startgame);
-    params.append("mypokemon", mypokemon);
-    fetch(url, {method: "POST", body: params})
-      .then(statusCheck)
-      .then(resp => resp.json())
-      .then(ProcessGame)
-      .catch(console.error);
-  }
+ /**
+ * This method gets the game and pokemon to get the player id/game id
+ * @param {boolean} startgame - true or false for the game
+ * @param {string} mypokemon - the name of the pokemon
+ */
+async function gamerequest(startgame, mypokemon) {
+  let url = gameURL;
+  let params = new FormData();
+  params.append("startgame", startgame);
+  params.append("mypokemon", mypokemon);
 
-  /**
-   * the function takes in the pokemon data and set the game and player id
-   * @param {element} responseData -fetch data
-   */
-  function ProcessGame(responseData) {
-    makingPokemon("p2", responseData.p2);
-    gameId = responseData.guid;
-    playerId = responseData.pid;
+  try {
+    const response = await fetch(url, {method: "POST", body: params});
+    const statusCheckedResponse = await statusCheck(response); // Ensure statusCheck is async or returns a Promise
+    const responseData = await statusCheckedResponse.json();
+    await ProcessGame(responseData); // Assuming ProcessGame is also async
+  } catch (error) {
+    console.error(error);
   }
+}
+
+
+/**
+ * The function takes in the pokemon data and sets the game and player id
+ * @param {object} responseData - fetched data
+ */
+async function ProcessGame(responseData) {
+  await makingPokemon("p2", responseData.p2); // makingPokemon needs to be async if it performs async operations
+  gameId = responseData.guid;
+  playerId = responseData.pid;
+}
 
   /**
    * short function for get element by id
