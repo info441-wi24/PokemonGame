@@ -6,13 +6,30 @@ mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
-const newUserSchema = new mongoose.Schema({
-  username: String,
-  created_date: { type: Date, default: Date.now }
+const gameResultSchema = new mongoose.Schema({
+  gameId: String,
+  playerId: String,
+  outcome: String,
+  p1Move: String,
+  p2Move: String,
+  p1HpRemaining: Number,
+  p2HpRemaining: Number,
+  timestamp: { type: Date, default: Date.now }
 });
 
-const User = mongoose.model('User', newUserSchema);
+const pokemonSchema = new mongoose.Schema({
+  name: String,
+  found: { type: Boolean, default: false }
+});
 
-const models = { User };
+const userPokedexSchema = new mongoose.Schema({
+  playerId: String,
+  pokemons: [pokemonSchema]
+});
+
+const GameResult = mongoose.model('GameResult', gameResultSchema);
+const UserPokedex = mongoose.model('UserPokedex', userPokedexSchema);
+
+const models = { GameResult, UserPokedex };
 
 export default models;

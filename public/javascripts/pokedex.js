@@ -51,6 +51,7 @@ async function init(){
       .catch(console.error); // define a user-friendly error-message function
   }
 
+
   /**
    * This function process the data from the base url to populat all of the data
    * for pokemon. it updates the name and images for it. it will call get more
@@ -218,6 +219,27 @@ async function init(){
     if ((responseData.results['p2-result']) === null) {
       qs("#results-container #p2-turn-results").classList.add('hidden');
     }
+
+    const gameResultData = {
+      gameId: gameId,
+      playerId: playerId,
+      outcome: responseData.p1['current-hp'] <= 0 ? 'lose' : 'win',
+      p1Move: responseData.results['p1-move'],
+      p2Move: responseData.results['p2-move'],
+      p1HpRemaining: responseData.p1['current-hp'],
+      p2HpRemaining: responseData.p2['current-hp'],
+    };
+
+    fetch('/api/gameResults', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(gameResultData),
+    })
+    .then(response => response.json())
+    .then(data => console.log('Game results tracked successfully'))
+    .catch((error) => console.error('Error tracking game results:', error));
   }
 
   /**
@@ -238,6 +260,20 @@ async function init(){
         }
       }
     }
+
+    fetch('/api/updatePokedex', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ pokemonName: shortname, found: true }),
+    })
+    .then(statusCheck)
+    .then(resp => resp.json())
+    .then(data => {
+      console.log('Pokemon added to Pokedex:', data);
+    })
+    .catch(console.error);
   }
 
   /**
