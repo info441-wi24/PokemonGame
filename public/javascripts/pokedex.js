@@ -203,9 +203,9 @@ async function init(){
     fetch('/api/battles', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json', // Indicate that the body is JSON
+        'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ // Convert the JavaScript object to a JSON string
+      body: JSON.stringify({
         userId: playerId,
         pokemonChosen: CurrentPokemon,
         opponentPokemon: responseData.p2.name,
@@ -217,7 +217,7 @@ async function init(){
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-      return response.json(); // Parse the JSON response
+      return response.json(); 
     })
     .then(data => console.log('Battle data saved:', data))
     .catch((error) => {
