@@ -24,12 +24,9 @@ const pokemonSchema = new mongoose.Schema({
 
 const userPokedexSchema = new mongoose.Schema({
   playerId: String,
+  pokemons: [pokemonSchema],
   online: { type: Boolean, default: false }
 });
-
-
-
-
 
 
 const GameResult = mongoose.model('GameResult', gameResultSchema);
