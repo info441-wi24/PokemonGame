@@ -28,6 +28,11 @@ const userPokedexSchema = new mongoose.Schema({
   online: { type: Boolean, default: false }
 });
 
+const onlineChatSchema = new mongoose.Schema({
+  username: String,
+  chat: String
+});
+
 
 const GameResult = mongoose.model('GameResult', gameResultSchema);
 const UserPokedex = mongoose.model('UserPokedex', userPokedexSchema);

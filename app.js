@@ -5,9 +5,10 @@ import logger from 'morgan';
 import models from './models.js';
 import msIdExpress from 'microsoft-identity-express'
 import sessions from 'express-session'
-
+import { createServer } from 'http';
+import { Server as SocketIO } from 'socket.io';
 import apiRouter from './routes/api.js';
-
+import http from 'http';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 
@@ -28,6 +29,26 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 var app = express();
+
+
+const server = http.createServer(app);
+const port = 3000;
+const io = new SocketIO(server);
+
+io.on('connection', (socket) => {
+  console.log('A user connected');
+
+  // Assuming 'send name' event is no longer needed because username is sent with every message
+  socket.on('chat message', (data) => {
+    // Simply forward the received object
+    io.emit('chat message', data);
+  });
+
+  socket.on('disconnect', () => {
+    console.log('User disconnected');
+  });
+});
+
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -62,5 +83,17 @@ app.get('/signin',
 app.get('/signout',
 	msid.signOut({postLogoutRedirect: '/'})
 )
+
+app.use(express.static('public', {
+  setHeaders: function (res, path) {
+    if (path.endsWith('.js')) {
+      res.set('Content-Type', 'application/javascript');
+    }
+  }
+}));
+
+server.listen(port, () => {
+  console.log(`Server listening on port ${port}`);
+});
 
 export default app;

@@ -13,6 +13,8 @@
     <script src='javascripts/pokedex.js'></script>
     <script src="javascripts/userIdentity.js"></script>
     <script src="javascripts/utils.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="javascripts/chat.js"></script>
   </head>
   <body onload="init()">
     <nav class="navbar navbar-light bg-light">
@@ -20,7 +22,7 @@
       <div id="identity_div">loading...</div>
     </nav>
 
-    <!-- Modified bavbar having Login / Logout anchor link. 
+    <!-- Modified bavbar having Login / Logout anchor link.
     <nav>
       <div class="login/logout container">
         <a href="/signin">Log in</a>
@@ -84,11 +86,22 @@
 
       <!-- Results container to display move results in each turn (between the two
            cards in the Game View) -->
-      <div class='hidden' id='results-container'>
-        <p class='hidden' id='p1-turn-results'></p>
-        <p class='hidden' id='p2-turn-results'></p>
-        <img class='hidden' id='loading' alt='loading'
-             src='https://courses.cs.washington.edu/courses/cse154/webservices/pokedex/icons/loading-pikachu.gif' />
+
+      <div class ='hidden' id='chat-wrapper'>
+        <div class='hidden' id='results-container'>
+          <p class='hidden' id='p1-turn-results'></p>
+          <p class='hidden' id='p2-turn-results'></p>
+          <img class='hidden' id='loading' alt='loading'
+                src='https://courses.cs.washington.edu/courses/cse154/webservices/pokedex/icons/loading-pikachu.gif' />
+        </div>
+        <div class="chat_container">
+          <h4 class="logo">Online Chat</h4>
+          <div class="messageArea" id="messageArea"></div>
+          <form class="form" id="form">
+              <input class="input" type="text" placeholder="Message" id="message">
+              <button class="message_button">Send Message</button>
+          </form>
+        </div>
       </div>
 
       <!-- The opponent's card should be populated when the game has started and the

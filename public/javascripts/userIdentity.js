@@ -1,5 +1,5 @@
 let myIdentity = undefined;
-
+let globalusername = null;
 async function loadIdentity(){
     let identity_div = document.getElementById("identity_div");
 
@@ -8,13 +8,14 @@ async function loadIdentity(){
 
         if(identityInfo.status == "loggedin"){
             myIdentity = identityInfo.userInfo.username;
+            globalusername = identityInfo.userInfo.name;
             identity_div.innerHTML = `
             <a href="/userInfo.html?user=${encodeURIComponent(identityInfo.userInfo.username)}">${escapeHTML(identityInfo.userInfo.name)} (${escapeHTML(identityInfo.userInfo.username)})</a>
             <a href="signout" class="btn btn-danger" role="button">Log out</a>`;
             if(document.getElementById("make_post_div")){
                 document.getElementById("make_post_div").classList.remove("d-none");
             }
-            
+
 
 
             Array.from(document.getElementsByClassName("new-comment-box")).forEach(e => e.classList.remove("d-none"))

@@ -370,6 +370,7 @@ async function init(){
   function mainpage() {
     qs("#endgame").classList.add('hidden');
     qs("#results-container").classList.add('hidden');
+    qs("#chat-wrapper").classList.add('hidden');
     qs("#p2").classList.add('hidden');
     qs("#p1 .hp-info").classList.add('hidden');
     getPokemon(CurrentPokemon);
@@ -409,6 +410,7 @@ async function gameView() {
   id("p2").classList.remove("hidden");
   qs(".hp-info").classList.remove("hidden");
   qs("#results-container").classList.remove("hidden");
+  qs("#chat-wrapper").classList.remove('hidden');
   id("start-btn").classList.add("hidden");
   id("flee-btn").classList.remove("hidden");
 
