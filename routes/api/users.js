@@ -47,8 +47,11 @@ router.post('/setOnlineStatus', async (req, res) => {
 router.get('/ranking', async (req, res) => {
     try {
       const players = await req.models.UserPokedex.find({}).populate('pokemons');
+
+        // Filter out players with 0 Pokémon
+        const filteredPlayers = players.filter(player => player.pokemons.length > 0);
   
-      let rankings = players.map(player => ({
+      let rankings = filteredPlayers.map(player => ({
         playerId: player.playerId,
         numbers: player.pokemons.length
       }));
