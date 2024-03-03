@@ -1,45 +1,66 @@
-// Ensure the DOM is fully loaded before running the script
+document.addEventListener('DOMContentLoaded', async (event) => {
+  let socket = io(); 
 
-document.addEventListener('DOMContentLoaded', (event) => {
-  let socket = io(); // Connect to the server using Socket.IO
 
-  // Elements from the DOM
   var form = document.getElementById('form');
   var input = document.getElementById('message');
   var messageArea = document.getElementById('messageArea');
 
-  // Listen for the form to be submitted
-  form.addEventListener('submit', function(e) {
-    e.preventDefault(); // Prevent the form from submitting traditionally
 
-    if (input.value && globalusername) {
-        
-        const messageData = {
-            username: globalusername,
-            message: input.value
-        };
+  function scrollToBottom() {
+    messageArea.scrollTop = messageArea.scrollHeight;
+  }
 
 
-        socket.emit('chat message', messageData);
-
-        input.value = '';
-    }
-  });
-
-  socket.on('chat message', function(data) {
-
+  function appendMessage(username, message) {
     let item = document.createElement('li');
     let messageContent = document.createElement('p');
     messageContent.classList.add('message');
-
-
-    messageContent.innerHTML = `<span class="username">${data.username}:</span> ${data.message}`;
-
-
+    messageContent.innerHTML = `<span class="username">${username}:</span> ${message}`;
     item.appendChild(messageContent);
     messageArea.appendChild(item);
+  }
 
 
-    window.scrollTo(0, document.body.scrollHeight);
-});
+  async function fetchAndDisplayMessages() {
+    try {
+      const response = await fetch('/api/users/allChats');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const allChats = await response.json();
+      allChats.forEach(chat => {
+        chat.conversations.forEach(convo => {
+          appendMessage(convo.username, convo.chat);
+        });
+      });
+      scrollToBottom();
+    } catch (error) {
+      console.error("Failed to load chat history:", error);
+    }
+  }
+
+  await fetchAndDisplayMessages();
+
+  // Listen for the form to be submitted
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    if (input.value && globalusername) {
+      const messageData = {
+          username: globalusername,
+          chat: input.value
+      };
+
+      socket.emit('chat message', messageData);
+      //appendMessage(globalusername, input.value);
+      input.value = '';
+    }
+  });
+
+
+  socket.on('chat message', function(data) {
+    appendMessage(data.username, data.chat);
+    scrollToBottom();
+  });
 });

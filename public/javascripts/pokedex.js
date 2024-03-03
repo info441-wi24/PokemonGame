@@ -12,6 +12,7 @@ async function init(){
   let playerId = null;
   let name = null;
   let username = null;
+  let socket = io();
   window.addEventListener("load", init);
 
   /**
@@ -52,6 +53,13 @@ async function init(){
       return false; // Assume not logged in on error
   }
 }
+
+
+
+  function scrollToBottom() {
+    const messageArea = document.getElementById('messageArea');
+    messageArea.scrollTop = messageArea.scrollHeight;
+  }
   /**
    * this function after it gets called from init function it fetch the base url
    * then it process the data to get all of the pokemon on the view page

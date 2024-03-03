@@ -36,16 +36,26 @@ const port = 3000;
 const io = new SocketIO(server);
 
 io.on('connection', (socket) => {
-  console.log('A user connected');
-
-  // Assuming 'send name' event is no longer needed because username is sent with every message
-  socket.on('chat message', (data) => {
-    // Simply forward the received object
-    io.emit('chat message', data);
+  // Fetch the entire chat history and emit to the just connected client
+  models.OnlineChat.findOne({}, {}, { sort: { 'createdAt': -1 } }, (err, chatHistory) => {
+    if (chatHistory) {
+      chatHistory.conversations.forEach(convo => {
+        socket.emit('chat message', convo);
+      });
+    }
   });
 
-  socket.on('disconnect', () => {
-    console.log('User disconnected');
+  socket.on('chat message', async (data) => {
+    try {
+    
+      const update = { $push: { conversations: data } };
+      const result = await models.OnlineChat.findOneAndUpdate({}, update, { upsert: true, new: true });
+      console.log('Chat updated:', result);
+    } catch (error) {
+      console.error('Error updating chat:', error);
+    }
+
+    io.emit('chat message', data); /
   });
 });
 

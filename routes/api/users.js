@@ -11,7 +11,7 @@ router.get('/myIdentity', (req, res) => {
           userInfo: {
               name: req.session.account.name,
               username: req.session.account.username
-          }
+          },
       });
   } else {
       // If not logged in, indicate the user is logged out
@@ -43,5 +43,17 @@ router.post('/setOnlineStatus', async (req, res) => {
         res.status(500).json({ error: 'Failed to update user status.' });
     }
 });
+
+
+router.get('/allChats', async (req, res) => {
+    try {
+      const allChats = await req.models.OnlineChat.find({});
+      res.json(allChats);
+    } catch (error) {
+      console.error('Failed to fetch conversations:', error);
+      res.status(500).send('Error fetching conversations');
+    }
+  });
+
 
 export default router;

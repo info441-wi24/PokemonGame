@@ -29,14 +29,16 @@ const userPokedexSchema = new mongoose.Schema({
 });
 
 const onlineChatSchema = new mongoose.Schema({
-  username: String,
-  chat: String
+  conversations: [{
+    username: String,
+    chat: String
+  }]
 });
 
 
 const GameResult = mongoose.model('GameResult', gameResultSchema);
 const UserPokedex = mongoose.model('UserPokedex', userPokedexSchema);
-
-const models = { GameResult, UserPokedex };
+const OnlineChat = mongoose.model('OnlineChat', onlineChatSchema);
+const models = { GameResult, UserPokedex, OnlineChat};
 
 export default models;

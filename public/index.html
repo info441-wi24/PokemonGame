@@ -10,10 +10,10 @@
     <meta charset='utf-8' />
     <title>Pokedex</title>
     <link href='/stylesheets/pokedex.css' rel='stylesheet' />
+    <script src="/socket.io/socket.io.js"></script>
     <script src='javascripts/pokedex.js'></script>
     <script src="javascripts/userIdentity.js"></script>
     <script src="javascripts/utils.js"></script>
-    <script src="/socket.io/socket.io.js"></script>
     <script src="javascripts/chat.js"></script>
   </head>
   <body onload="init()">
@@ -95,7 +95,7 @@
                 src='https://courses.cs.washington.edu/courses/cse154/webservices/pokedex/icons/loading-pikachu.gif' />
         </div>
         <div class="chat_container">
-          <h4 class="logo">Online Chat</h4>
+          <h4 class="logo">Global Online Chat</h4>
           <div class="messageArea" id="messageArea"></div>
           <form class="form" id="form">
               <input class="input" type="text" placeholder="Message" id="message">
