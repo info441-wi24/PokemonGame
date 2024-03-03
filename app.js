@@ -24,7 +24,7 @@ const appSettings = {
       unauthorized: "/unauthorized"
     }
   };
-
+// https://pokemongame441.azurewebsites.net
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
