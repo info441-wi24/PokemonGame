@@ -17,19 +17,17 @@ As developers, our desire to build such a platform is driven not only by our rec
 
 | Priority | User Story | Technical Implementation |
 |----------|------------|--------------------------|
-| P0 | As a player, I want to make a match with other players to start the game. | Matchmaking API will handle incoming matching requests by placing players into a matchmaking queue, pairing players based on available criteria, and then notifying both players' clients via WebSocket to initiate the game session. |
+| P0 | As a player, I want to make a match with other pokemons or players to start the game. | Matchmaking API will handle incoming matching requests by placing players into a matchmaking queue, pairing players based on available criteria, and then notifying both players' clients via WebSocket to initiate the game session. |
 | P0 | As a player, I want to make a user account before starting the game. | User Authentication API will provide endpoints for account creation, login, and management. It will use JWT for secure authentication and session management in Azure. |
-| P0 | As a player, I want to start a battle once matched with another player. | Start Battle API Endpoint will be triggered once matchmaking is successful, initializing the game state for both players. This endpoint will set up the battle arena and determine the turn order. WebSocket will notify both clients that the battle has started. |
+| P0 | As a player, I want to start a battle once matched with another pokemon or player. | Start Battle API Endpoint will be triggered once matchmaking is successful, initializing the game state for both players. This endpoint will set up the battle arena and determine the turn order. WebSocket will notify both clients that the battle has started. |
 | P0 | As a player, I want to select moves during my turn in the battle. | Make Move API Endpoint will accept move selections from the current player. It will validate the move, update the game state accordingly, and send the result of the move to both players via WebSocket. |
 | P0 | As a player, I want to see the outcome of each move in real time. | Real-time Update Mechanism via WebSocket will ensure that both players receive updates immediately after each move is made, including the move used, the damage dealt, and any status effects applied. |
 | P0 | As a player, I want the battle to end when my or my opponent's Pokémon all faint. | End Battle API Endpoint will be called when all Pokémon of a player faint, determining the winner and updating both players' records. Game state information will be saved for match history purposes. |
 | P1 | As a player, I want to store all my information and playing results in my account. | MongoDB will be used to securely store user profiles, game results, and possibly rankings. The User Data Management API will handle CRUD operations on this data. |
 | P1 | As a player, I want to see real-time updates during the battle. | WebSocket technology will be used for full-duplex communication between the client and server, allowing for real-time updates of game state, player moves, and battle outcomes. |
-| P1 | As a player, I want to surrender during a battle if I choose to. | Surrender Endpoint will allow a player to forfeit the match, automatically ending the game, updating the game state and player records accordingly. |
-| P1 | As a player, I want to review my match history and statistics. | Extend the User Data Management API to include endpoints for retrieving match histories and calculating statistics. Data will be stored in MongoDB and retrieved as needed. |
+| P1 | As a player, I want to review my battle history and statistics. | Extend the User Data Management API to include endpoints for retrieving battle histories and calculating statistics. Data will be stored in MongoDB and retrieved as needed. |
 | P1 | As a player, I want to participate in rankings to see how I compare to others. | Rankings API will calculate and update player rankings based on game outcomes, storing this information in MongoDB. Rankings will be displayed in the client UI. |
 | P2 | As a player, I want to customize my profile and Pokémon team. | User Profile and Team Customization features will allow players to modify their profiles and manage their Pokémon teams, saving changes to the user's account in MongoDB. |
-| P3 | As a player, I want to resume interrupted games. | Implement game state saving and resuming functionalities in the Game State Management API, using MongoDB to save ongoing game states. This will allow players to continue interrupted games. |
 
 
 
@@ -75,11 +73,6 @@ PlayerPokemonID (Primary Key): Unique identifier.
 UserID:UserID.
 PokemonID: PokemonID.
 BattleID: BattleID.
-
-MatchmakingQueue (to manage the pool of players looking for matches)
-QueueID (Primary Key): Unique identifier.
-UserID: UserID.
-JoinedAt: Timestamp when the user joined the matchmaking queue.
 
 UserStatistics (to store wins, losses, and other statistics)
 StatID (Primary Key): Unique identifier.
