@@ -47,7 +47,7 @@ io.on('connection', (socket) => {
 
   socket.on('chat message', async (data) => {
     try {
-    
+
       const update = { $push: { conversations: data } };
       const result = await models.OnlineChat.findOneAndUpdate({}, update, { upsert: true, new: true });
       console.log('Chat updated:', result);
@@ -55,7 +55,7 @@ io.on('connection', (socket) => {
       console.error('Error updating chat:', error);
     }
 
-    io.emit('chat message', data); /
+    io.emit('chat message', data);
   });
 });
 
