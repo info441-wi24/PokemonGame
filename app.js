@@ -18,7 +18,7 @@ const appSettings = {
       clientSecret: "euL8Q~HZoc~Z_kim30TO7Iw3X9F~8Zw1qgqmIbyl"
     },
     authRoutes: {
-      redirect: "/redirect",
+      redirect: " /redirect",
       error: "/error",
       unauthorized: "/unauthorized"
     }
